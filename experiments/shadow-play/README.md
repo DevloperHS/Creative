@@ -18,9 +18,9 @@ tools/                  serve.mjs · stills.mjs · render.mjs (parallel) · mux.
 out/                    shadow-play.mp4 (final), audio.wav
 ```
 
-## Rebuild
+## Rebuild (output: 1920×1080 @ 60 fps)
 ```bash
-node tools/render.mjs --workers 4        # ~2 min: 1200 frames, 5 sub-frames each (real motion blur)
+node tools/render.mjs --workers 4        # ~9 min: 3000 frames, 5 sub-frames each (real motion blur)
 python3 audio/build.py out/audio.wav     # ~10 s
 tools/mux.sh out/shadow-play.mp4
 node tools/stills.mjs out/stills 12 26.5 # quick look at specific timestamps
