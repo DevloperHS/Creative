@@ -14,8 +14,8 @@ export function buildPost() {
 
 /** Red mist that floods the frame at the end of act 3 and parts to reveal the demon */
 export function drawMist(ctx, t) {
-  const a = sstep(38.55, 39.2, t) * (1 - sstep(39.45, 40.4, t)); if (a <= .003) return;
-  const part = sstep(39.4, 40.4, t), R = rng(333);
+  const a = sstep(38.85, 39.3, t) * (1 - sstep(39.4, 40.2, t)); if (a <= .003) return;
+  const part = sstep(39.35, 40.2, t), R = rng(333);
   ctx.save(); ctx.fillStyle = `rgba(34,10,10,${clamp(a * 1.3) * (.4 + .35 * sstep(.85, 1, a))})`; ctx.fillRect(0, 0, W, H);
   for (let i = 0; i < 34; i++) {
     const x0 = R() * W, y0 = R() * H, s = 500 + R() * 800, side = x0 < W / 2 ? -1 : 1, sp = R();
@@ -61,7 +61,7 @@ export function post(out, acc, t, w, cam) {
   if (ta > 0) {
     out.save(); out.globalAlpha = ta * .8; out.translate(W / 2, H / 2); out.scale(1.9, 1); const plate = out.createRadialGradient(0, 0, 0, 0, 0, 380); plate.addColorStop(0, 'rgba(255,246,230,.95)'); plate.addColorStop(.55, 'rgba(255,242,220,.5)'); plate.addColorStop(1, 'rgba(255,240,214,0)'); out.fillStyle = plate; out.fillRect(-W, -H, W * 2, H * 2); out.restore();
     out.save(); out.textAlign = 'center'; out.textBaseline = 'middle'; out.globalAlpha = ta;
-    out.font = 'italic 44px "DejaVu Serif", Georgia, serif'; out.fillStyle = 'rgb(70,64,58)'; out.shadowColor = 'rgba(255,236,200,.9)'; out.shadowBlur = 10;
+    out.font = 'italic 44px "DejaVu Serif", Georgia, serif'; out.fillStyle = 'rgb(58,40,26)'; out.shadowColor = 'rgba(255,236,200,.9)'; out.shadowBlur = 10;
     const line = 'The storm was never the end. Keep walking.'; out.letterSpacing = '1px'; out.fillText(line, W / 2, H / 2 + 6 - (1 - ta) * 6);
     out.restore();
   }

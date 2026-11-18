@@ -88,7 +88,7 @@ export function ballAt(t) {
 }
 export const demonAt = (t) => {
   if (t < 39.35 || t > 44.9) return null;
-  const run = Math.pow(seg(t, 39.4, 41.9), 1.25), z = lerp(46, 12.4, run) + 0.3 * seg(t, 41.9, 42.6);
+  const run = Math.pow(seg(t, 39.4, 41.9), 1.25), z = lerp(46, 16.5, run) + 0.3 * seg(t, 41.9, 42.6);
   const crumble = seg(t, 43.4, 44.8);
-  return { x: 5.0 + noise1(t * 4) * .15, y: 4.0 + Math.abs(Math.sin(t * 5.2)) * .12 * (1 - crumble), z, scale: 4.6 + 2.8 * run, alpha: 1 - crumble, crumble, run, bob: Math.sin(t * 5.2) };
+  return { x: 5.0 + noise1(t * 4) * .15, y: 4.0 + Math.abs(Math.sin(t * 5.2)) * .12 * (1 - crumble), z, scale: 4.4 + 1.9 * run, alpha: 1 - crumble, crumble, run, bob: Math.sin(t * 5.2) };
 };

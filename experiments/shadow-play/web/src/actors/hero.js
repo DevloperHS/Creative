@@ -115,7 +115,7 @@ function drawArmsSword(ctx, P, sx, sy, hero, t, tm, glow, rim) {
   const arm = (shx, shy, hx, hy, bend, col) => {
     const el = ik(shx, shy, hx, hy, .31, .30, bend);
     ctx.strokeStyle = col; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = .11; ctx.beginPath(); ctx.moveTo(shx, shy); ctx.lineTo(el[0], el[1]); ctx.lineTo(hx, hy); ctx.stroke();
-    ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(hx, hy, .046, 0, TAU); ctx.fill(); ctx.fillStyle = '#8f9da1'; ctx.beginPath(); ctx.arc(hx + .008, hy + .012, .028, 0, TAU); ctx.fill(); ctx.strokeStyle = SKIN; ctx.lineWidth = .014; for (let f = 0; f < 3; f++) { ctx.beginPath(); ctx.moveTo(hx, hy + (f - 1) * .02); ctx.lineTo(hx + .05, hy + (f - 1) * .024 + .012); ctx.stroke(); }
+    ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(hx, hy, .046, 0, TAU); ctx.fill(); ctx.fillStyle = '#8f9da1'; ctx.beginPath(); ctx.arc(hx + .008, hy + .012, .028, 0, TAU); ctx.fill(); ctx.fillStyle = SKIN; ctx.beginPath(); ctx.ellipse(hx + .03, hy - .035, .02, .012, -.5, 0, TAU); ctx.fill();
   };
   const shx = sx + .02, shy = sy + .06;
   // back arm (second hand) first, sword over it
