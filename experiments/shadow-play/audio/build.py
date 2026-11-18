@@ -10,8 +10,9 @@ def main(path):
     y = bus.mix()[: int(score.D * SR)]; f = fg.mix()[: int(score.D * SR)]
     tt = np.arange(len(y)) / SR
     # act 4: the score DROPS OUT (ducked hard) so only the demon's roar/steps, breath and fading whispers remain
-    duck = np.interp(tt, [31.2, 31.6, 33.5, 33.9, 39.2, 39.45, 43.9, 45.0], [1, .2, .2, 1, 1, .15, .15, 1])  # lowest point: only the breath; act 4: score drops out
-    y = y * duck[:, None] + f
+    duck = np.interp(tt, [31.2, 31.6, 33.5, 33.9, 39.2, 39.45, 43.9, 45.0], [1, .2, .2, 1, 1, .1, .1, 1])  # lowest point: only the breath; act 4: score drops out
+    y = y * duck[:, None] + f * .75
+    swell_ = np.interp(tt, [44.5, 46.5, 48.8, 50], [1, 1.5, 1.7, .6]); y = y * np.where((tt > 44.5), swell_, 1.0)[:, None]
     # global character: muffle after the blast (shot 3 low point) and clear again in the last act
     t = np.arange(len(y)) / SR
     mu = np.interp(t, [27.38, 27.5, 28.8, 33.4, 34.0], [0, 1, 1, .6, 0])
@@ -27,7 +28,7 @@ def main(path):
     rms = np.sqrt((y ** 2).mean()); y = y * (.185 / rms)
     m_, sd = (y[:, 0] + y[:, 1]) / 2, (y[:, 0] - y[:, 1]) / 2; sd = hp(sd, 180, 2) * 1.7; y = np.stack([m_ + sd, m_ - sd], axis=1)   # widen the stereo image
     y = np.tanh(y * 1.0 / .95) * .95
-    y = y / max(1.0, np.abs(y).max() / .80)
+    y = y / max(1.0, np.abs(y).max() / .72)
     with wave.open(path, 'wb') as w:
         w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR)
         w.writeframes((np.clip(y, -1, 1) * 32767).astype('<i2').tobytes())

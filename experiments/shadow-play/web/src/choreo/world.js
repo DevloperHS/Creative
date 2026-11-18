@@ -6,7 +6,7 @@ export const wl = track([[0, .12], [15.2, .12], [18.2, .42], [41, .42], [45, .1]
 export const skyDark = track([[0, 0], [27.35, 0], [27.9, .55, 'out'], [41, .55], [44.2, .35], [46, 0]]);
 export const sunBreak = track([[0, 0], [44.4, 0], [46.8, 1, 'io']]);
 export const warm = track([[0, 0], [44.5, 0], [48.5, 1]]);
-export const fadeWhite = t => { const e = first('fade'); return sstep(e.t, e.t + e.dur, t); };
+export const fadeWhite = t => { const e = first('fade'); return sstep(e.t, e.t + e.dur, t) * .9; };
 export const pathAmt = t => { const e = first('path'); return seg(t, e.t, e.t + e.dur); };
 export const lightning = t => 0;
 

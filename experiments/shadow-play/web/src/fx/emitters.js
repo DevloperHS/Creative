@@ -34,9 +34,9 @@ export function drawFXFront(ctx, cam, t, w) {
   for (const e of events('whisper')) {
     let a = null, m = .3;
     if (e.at === 'smoke') { a = [9, 6.2, 22]; m = 1.2; }
-    let px = 0;
-    if (e.at === 'hero') { const h = heroPos(t), side = e.text.length > 16 ? -1 : 1, R = cam.right, k = 1.05 + (e.text.length > 16 ? 0 : .0); a = [h[0] + R[0] * side * k, h[1] + 1.5 + (e.text.length > 16 ? .1 : .55), h[2] + R[2] * side * k]; px = 44; }
-    if (a) drawDoubt(ctx, cam, t, e, a, { m, px, dur: e.at === 'smoke' ? 3.0 : 2.8 });
+    let px = 0, ox = 0, oy = 0;
+    if (e.at === 'hero') { const h = heroPos(t), side = e.text.length > 16 ? -1 : 1, R = cam.right, k = 1.05 + (e.text.length > 16 ? 0 : .0); a = [h[0], h[1] + 1.5, h[2]]; px = 44; ox = side * 250; oy = e.text.length > 16 ? 70 : -30; }
+    if (a) drawDoubt(ctx, cam, t, e, a, { m, px, ox, oy, dur: e.at === 'smoke' ? 3.0 : 2.8 });
   }
   // ---- shot 1: dive trail, palisade, clashes, stab ----
   const w0 = wraithAt(t);

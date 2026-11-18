@@ -4,7 +4,6 @@ out/*.wav
 out/_tmp*
 __pycache__/
 node_modules/
-out/shadow-play.mp4
 out/review/round*/
 out/sheet*.png
 out/*.log
