@@ -26,7 +26,7 @@ export function drawWraith(ctx, p, t, seed = 0) {
 function drawSmokeBody(ctx, p, t, trail, seed, dm) {
   const n = 16; const cr = p.crumble || 0;
   // torn-cloak mass: guarantees a strong dark silhouette under the smoke
-  { const k = 1 + dm * .45, side = (sg) => { const pts = []; for (let i = 0; i <= 6; i++) { const u = i / 6, tr = trail(.05 + u * .35); pts.push([sg * (.34 + Math.sin(u * 2.4) * .3 + (Math.sin(t * 2.4 + i * 1.9 + sg) * .05 + (hash(i * 3.7 + sg) - .5) * .12) * u) * k + tr[0] * u * .9, -.4 + u * 1.45 + tr[1] * u * .9]); } return pts; };
+  { const k = 1 + dm * .95, side = (sg) => { const pts = []; for (let i = 0; i <= 6; i++) { const u = i / 6, tr = trail(.05 + u * .35); pts.push([sg * (.34 + Math.sin(u * 2.4) * .3 + (Math.sin(t * 2.4 + i * 1.9 + sg) * .05 + (hash(i * 3.7 + sg) - .5) * .12) * u) * k + tr[0] * u * .9, -.4 + u * 1.45 + tr[1] * u * .9]); } return pts; };
     const L = side(-1), Rr = side(1), tr2 = trail(.5);
     ctx.globalAlpha = (1 - cr * .6) * .97; ctx.fillStyle = '#04060a'; ctx.beginPath(); ctx.moveTo(L[0][0], L[0][1]); for (let i = 1; i < L.length; i++) ctx.lineTo(L[i][0], L[i][1]);
     const teeth = 9; for (let i = 1; i < teeth; i++) { const u = i / teeth, x = lerpx(L[6][0], Rr[6][0], u), tooth = (i % 2 ? .55 : .12) * (.6 + hash(i * 1.3 + seed) * .8) * k; ctx.lineTo(x + tr2[0] * (.6 + u * .4) + Math.sin(t * 3 + i * 1.7) * .06, L[6][1] + tooth + tr2[1] * .8 + Math.sin(t * 2.2 + i) * .06); }
@@ -109,8 +109,8 @@ function drawArms(ctx, p, t, trail, dm, seed) {
     const sx = side * .3 * scale, sy = -.3, hx = hand[0] * scale + Math.sin(t * 9 + side) * .008, hy = hand[1] * scale;
     const [ex, ey, tx, ty] = ik(sx, sy, hx, hy, .5 * scale, .55 * scale, side * -1);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.strokeStyle = BONE_D; ctx.lineWidth = .052 * scale; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.lineTo(tx, ty); ctx.stroke();
-    ctx.strokeStyle = BONE; ctx.lineWidth = .03 * scale; ctx.stroke();
+    ctx.strokeStyle = BONE_D; ctx.lineWidth = (.078 + dm * .06) * scale; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.lineTo(tx, ty); ctx.stroke();
+    ctx.strokeStyle = BONE; ctx.lineWidth = (.05 + dm * .04) * scale; ctx.stroke();
     ctx.fillStyle = BONE_L; ctx.beginPath(); ctx.arc(ex, ey, .035 * scale, 0, TAU); ctx.fill();
     // claws
     const a = Math.atan2(ty - ey, tx - ex);
@@ -125,10 +125,10 @@ function drawChain(ctx, p, t, wx, wy, trail, side, scale, seed) {
   for (let i = 1; i <= n; i++) { const u = i / n, tr = trail(i * .05); pts.push([wx + tr[0] * .95 * (.4 + u) + Math.sin(t * 3 + i * .6 + side) * .02 * u, wy + (i * .075 + tr[1] * .9) * (1)]); }
   ctx.save(); ctx.lineCap = 'round';
   pts.forEach((q, i) => { const a = Math.atan2(q[1] - prev[1], q[0] - prev[0]);
-    ctx.save(); ctx.translate(q[0], q[1]); ctx.rotate(a); ctx.strokeStyle = i % 2 ? '#5a3216' : '#7b4a22'; ctx.lineWidth = .018 * scale; ctx.beginPath(); ctx.ellipse(0, 0, .035 * scale, i % 2 ? .016 : .024, 0, 0, TAU); ctx.stroke(); ctx.restore(); prev = q; });
+    ctx.save(); ctx.translate(q[0], q[1]); ctx.rotate(a); ctx.strokeStyle = i % 2 ? '#4a2c14' : '#6e4220'; ctx.lineWidth = .03 * scale; ctx.beginPath(); ctx.ellipse(0, 0, .05 * scale, i % 2 ? .022 : .034, 0, 0, TAU); ctx.stroke(); ctx.restore(); prev = q; });
   ctx.restore();
-  if (p.chainText && p.chainText.a > .01 && side === (seed % 2 ? 1 : -1)) {
-    const q = pts[Math.min(8, n - 1)]; ctx.save(); ctx.font = `italic ${.07 * scale}px "DejaVu Serif", serif`; ctx.textAlign = 'center';
+  if (p.chainText && p.chainText.a > .01) {
+    const q = pts[Math.min(8, n - 1)]; ctx.save(); ctx.font = `italic ${.12 * scale}px "DejaVu Serif", serif`; ctx.textAlign = 'center';
     ctx.fillStyle = `rgba(240,240,240,${p.chainText.a * (.55 + .45 * Math.sin(t * 40))})`; ctx.shadowColor = 'rgba(255,255,255,.8)'; ctx.shadowBlur = 4; ctx.fillText(p.chainText.s, q[0], q[1] + .02); ctx.restore();
   }
 }

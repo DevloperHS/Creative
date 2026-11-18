@@ -6,7 +6,7 @@ import { add } from '../gfx/draw.js';
 export function drawDoubt(ctx, cam, t, ev, anchor, opts = {}) {
   const dur = opts.dur ?? 2.6, a0 = t - ev.t; if (a0 < 0 || a0 > dur + .2) return;
   const p = cam.project(anchor[0], anchor[1], anchor[2]); if (!p) return;
-  const px = clamp(opts.m ?? .26, .05, 3) * p.s * 1.0; if (px < 5) return;
+  const px = opts.px ? opts.px : clamp(opts.m ?? .26, .05, 3) * p.s * 1.0; if (px < 5) return;
   const str = ev.text, n = str.length;
   ctx.save(); ctx.font = `italic ${px}px "DejaVu Serif", Georgia, serif`; ctx.textBaseline = 'middle';
   const widths = [...str].map(c => ctx.measureText(c).width), total = widths.reduce((a, b) => a + b, 0);

@@ -29,7 +29,7 @@ export function drawMist(ctx, t) {
 
 export function post(out, acc, t, w, cam) {
   out.save();
-  out.filter = 'saturate(.8) contrast(1.12) brightness(.97)'; out.drawImage(acc, 0, 0); out.filter = 'none';
+  out.filter = `saturate(${(.8 + .4 * w.warm).toFixed(2)}) contrast(1.1) brightness(${(.98 + .06 * w.warm).toFixed(2)})`; out.drawImage(acc, 0, 0); out.filter = 'none';
   // --- bloom (threshold → blur → add) + horizontal anamorphic streak ---
   g1.save(); g1.clearRect(0, 0, W / 4, H / 4); g1.filter = 'brightness(.62) contrast(2.6)'; g1.drawImage(acc, 0, 0, W / 4, H / 4); g1.restore();
   g2.save(); g2.clearRect(0, 0, W / 4, H / 4); g2.filter = 'blur(6px)'; g2.drawImage(B1, 0, 0); g2.restore();
@@ -39,14 +39,14 @@ export function post(out, acc, t, w, cam) {
   out.restore();
   // --- grade: teal-grey in shadows, gold as the light arrives ---
   out.save(); out.globalCompositeOperation = 'soft-light'; out.fillStyle = `rgba(30,92,106,${.42 * (1 - w.warm * .8)})`; out.fillRect(0, 0, W, H);
-  out.fillStyle = `rgba(255,186,100,${.5 * w.warm})`; out.fillRect(0, 0, W, H); out.restore();
+  out.fillStyle = `rgba(255,190,110,${.55 * w.warm})`; out.fillRect(0, 0, W, H); out.globalCompositeOperation = 'screen'; out.fillStyle = `rgba(255,200,130,${.1 * w.warm})`; out.fillRect(0, 0, W, H); out.fillStyle = 'rgb(9,19,25)'; out.fillRect(0, 0, W, H); out.restore();
   out.save(); out.globalCompositeOperation = 'multiply'; const v = out.createRadialGradient(W / 2, H / 2, H * .35, W / 2, H / 2, H * .95); v.addColorStop(0, 'rgba(255,255,255,1)'); v.addColorStop(1, `rgba(${40 + w.warm * 120},${48 + w.warm * 100},${54 + w.warm * 70},1)`); out.fillStyle = v; out.fillRect(0, 0, W, H); out.restore();
   // --- full-frame light events ---
   const flashes = [];
   for (const e of events('clash')) { const a = t - e.t; if (a >= 0 && a < .12) flashes.push(['255,230,200', (1 - a / .12) * .22 * (e.mag || .6)]); }
   const stab = T('stab'); { const a = t - stab; if (a >= 0) { const up = sstep(0, .25, a), down = 1 - sstep(.9, 2.0, a); flashes.push(['255,120,36', Math.max(0, up * down) * .5]); flashes.push(['255,226,180', Math.max(0, (1 - a / .35)) * .3]); } }
   { const a = t - T('blast'); if (a >= 0 && a < .6) flashes.push(['255,190,120', (1 - a / .6) * .55]); }
-  { const a = t - T('ball_hit'); if (a >= 0 && a < .5) flashes.push(['235,248,255', (1 - a / .5) * .85]); }
+  { const a = t - T('ball_hit'); if (a >= 0 && a < .3) flashes.push(['235,248,255', (1 - a / .3) * .5]); }
   { const a = t - T('ash_burst'); if (a >= 0 && a < .2) flashes.push(['255,255,255', (1 - a / .2) * .5]); }
   { const a = t - T('slash'); if (a >= 0 && a < .3) flashes.push(['230,245,255', (1 - a / .3) * .45]); }
   out.save(); out.globalCompositeOperation = 'lighter'; for (const [c, a] of flashes) if (a > .005) { out.fillStyle = `rgba(${c},${clamp(a)})`; out.fillRect(0, 0, W, H); } out.restore();

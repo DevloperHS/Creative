@@ -10,7 +10,7 @@ const mk = (w, h) => { const c = document.createElement('canvas'); c.width = w; 
 
 export function buildSky() {
   CLOUDS = mk(SW, SH); const g = CLOUDS.getContext('2d'), R = rng(7);
-  g.fillStyle = grad(g, 0, 0, 0, SH, [[0, '#0a1014'], [.35, '#1a252b'], [.7, '#3b4c54'], [1, '#6e8088']]); g.fillRect(0, 0, SW, SH);
+  g.fillStyle = grad(g, 0, 0, 0, SH, [[0, '#111b21'], [.35, '#24323a'], [.7, '#4a5d66'], [1, '#869aa1']]); g.fillRect(0, 0, SW, SH);
   const put = (img, x, y, s, a, rot) => { for (const dx of [-SW, 0, SW]) { g.globalAlpha = a; g.save(); g.translate(x + dx, y); g.rotate(rot); g.drawImage(img, -s / 2, -s * .32, s, s * .64); g.restore(); } };
   for (let i = 0; i < 150; i++) put(S.cloudDark[(R() * 4) | 0], R() * SW, R() * SH * .62, 380 + R() * 700, .55 + R() * .3, (R() - .5) * .12);
   for (let i = 0; i < 170; i++) put(S.cloud[(R() * 5) | 0], R() * SW, SH * (.45 + R() * .5), 360 + R() * 600, .16 + R() * .2, (R() - .5) * .08);

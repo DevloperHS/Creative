@@ -16,7 +16,7 @@ row(-26, -9, 23, .4, 2.2, 3.6, 'far'); row(10, 24, 23, .4, 2.2, 3.6, 'far');
 const ROCKS = [[-7.2, 3.3, .42], [9.4, 4.4, .5], [-9.5, 9, .6], [11.5, 10.5, .8], [-3.3, 16, .9], [14.5, 18, 1.3], [-14.5, 14.5, 1.2], [3.5, 27, 1.6], [-8, 31, 1.8], [20, 30, 2.0], [12, 6.5, .45]];
 const PILES = [[-7.4, 7.6, 1], [10.8, 7.2, 1.2], [-11.5, 15.5, 1.5], [6.5, 15, 1.3], [-4.5, 21, 1.6], [15, 21, 1.8]];
 export const FIRES = [[-3.2, 15.5], [11, 16.5], [1.2, 21.5], [-8.5, 23], [16, 24], [6.5, 12.6]];
-const SHIP = { x: -17, z: 33, len: 17, h: 8 };
+const SHIP = { x: -13, z: 25, len: 17, h: 8 };
 const rocksShape = ROCKS.map(r => { const pts = []; for (let i = 0; i < 9; i++) { const a = i / 9 * 6.283; pts.push([Math.cos(a) * (1 + (R() - .5) * .35), -Math.max(0, Math.sin(-a)) * (.8 + (R() - .5) * .3) + Math.max(0, Math.sin(a)) * .12]); } return pts; });
 
 function fillPoly(ctx, pts) { ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); ctx.fill(); }

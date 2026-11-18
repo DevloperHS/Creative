@@ -6,8 +6,12 @@ from dsp import *
 import score
 
 def main(path):
-    bus = score.build()
-    y = bus.mix()[: int(score.D * SR)]
+    bus, fg = score.build()
+    y = bus.mix()[: int(score.D * SR)]; f = fg.mix()[: int(score.D * SR)]
+    tt = np.arange(len(y)) / SR
+    # act 4: the score DROPS OUT (ducked hard) so only the demon's roar/steps, breath and fading whispers remain
+    duck = np.interp(tt, [39.2, 39.45, 43.9, 45.0], [1, .22, .22, 1])
+    y = y * duck[:, None] + f
     # global character: muffle after the blast (shot 3 low point) and clear again in the last act
     t = np.arange(len(y)) / SR
     mu = np.interp(t, [27.38, 27.5, 28.8, 33.4, 34.0], [0, 1, 1, .6, 0])
@@ -18,7 +22,7 @@ def main(path):
     # master: high-pass, slow glue compression, loudness target (~ -14 LUFS), soft-limit to -1 dBFS
     y = np.stack([hp(y[:, c], 24, 2) for c in range(2)], axis=1)
     env = np.abs(y).max(axis=1)
-    sm = np.convolve(env, np.ones(2400) / 2400, 'same'); gr = 1 / np.maximum(1, (sm / .5) ** .6)
+    sm = np.convolve(env, np.ones(2400) / 2400, 'same'); gr = 1 / np.maximum(1, (sm / .6) ** .35)
     y = y * gr[:, None]
     rms = np.sqrt((y ** 2).mean()); y = y * (.185 / rms)
     y = np.tanh(y * 1.0 / .95) * .95

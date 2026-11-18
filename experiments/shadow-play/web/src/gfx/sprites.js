@@ -34,6 +34,7 @@ export function buildSprites() {
   S.cloudDark = [0, 1, 2, 3].map(i => noiseBlob(i + 51, 256, [26, 36, 42], { bias: .55, gain: 1.5, freq: 2.2, soft: 1.0 }));
   S.dust = [0, 1, 2].map(i => noiseBlob(i + 61, 128, [170, 185, 190], { bias: .4, gain: 1.2, soft: 1.2 }));
   S.dustBrown = [0, 1, 2].map(i => noiseBlob(i + 71, 128, [96, 84, 70], { bias: .4, gain: 1.2, soft: 1.2 }));
+  S.spray = [0, 1, 2].map(i => noiseBlob(i + 81, 160, [236, 245, 249], { bias: .55, gain: 1.2, soft: 1.1 }));
   S.white = glow([255, 255, 255]);
   S.orange = glow([255, 120, 28]);
   S.hot = glow([255, 200, 120]);

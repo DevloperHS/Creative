@@ -34,8 +34,9 @@ export function drawFXFront(ctx, cam, t, w) {
   for (const e of events('whisper')) {
     let a = null, m = .3;
     if (e.at === 'smoke') { a = [9, 6.2, 22]; m = 1.2; }
-    if (e.at === 'hero') { const h = heroPos(e.t + .5); a = [h[0] + (e.text.length > 16 ? -1.2 : 1.0), 2.3 + (e.text.length > 16 ? .0 : .45), h[2] - .4]; m = .24; }
-    if (a) drawDoubt(ctx, cam, t, e, a, { m, dur: e.at === 'smoke' ? 3.0 : 2.4 });
+    let px = 0;
+    if (e.at === 'hero') { const h = heroPos(t), side = e.text.length > 16 ? -1 : 1, R = cam.right, k = 1.05 + (e.text.length > 16 ? 0 : .0); a = [h[0] + R[0] * side * k, h[1] + 1.5 + (e.text.length > 16 ? .1 : .55), h[2] + R[2] * side * k]; px = 44; }
+    if (a) drawDoubt(ctx, cam, t, e, a, { m, px, dur: e.at === 'smoke' ? 3.0 : 2.8 });
   }
   // ---- shot 1: dive trail, palisade, clashes, stab ----
   const w0 = wraithAt(t);
@@ -46,11 +47,12 @@ export function drawFXFront(ctx, cam, t, w) {
   }
   const sm = T('palisade_smash');
   burst(ctx, cam, t, { t0: sm, n: 300, seed: 12, pos: [-3.5, 1.1, 4.5], speed: [2, 9], dir: 'sphere', vel: [-1.5, 1.2, -4.5], gravity: 9, life: [.8, 2.2], size: [.025, .09], kind: 'streak', color: '#6b543a', alpha: 1, floor: .05 });
+  burst(ctx, cam, t, { t0: sm, n: 90, seed: 14, pos: [-3.5, 1.1, 4.5], speed: [3, 12], dir: 'sphere', vel: [-1.5, 2.5, -4], gravity: 9, life: [1.0, 2.4], size: [.35, 1.1], spin: 9, kind: 'plank', color: '#3a2c20', alpha: 1, floor: .05 });
   burst(ctx, cam, t, { t0: sm, n: 70, seed: 13, pos: [-3.5, 1.2, 4.6], speed: [1, 5], dir: 'sphere', vel: [-1, .5, -1.5], drag: 1.2, life: [1.2, 2.6], size: [.4, 1.2], grow: 1.2, kind: 'sprite', img: S.dustBrown, rot: 1, alpha: .5, floor: .1 });
   for (const e of events('clash')) {
     const m = mid(e.t), mg = e.mag || .6;
-    burst(ctx, cam, t, { t0: e.t, n: Math.round(70 * mg + 30), seed: e.t * 13 | 0, pos: m, speed: [3, 12 + mg * 6], dir: 'sphere', gravity: 9, life: [.3, .95], size: [.012, .03], kind: 'streak', color: '#ffd8a0', alpha: 1, add: true, floor: .05 });
-    burst(ctx, cam, t, { t0: e.t, n: 40, seed: e.t * 29 | 0, pos: m, speed: [1, 5], dir: 'sphere', gravity: 4, life: [.4, 1.2], size: [.03, .07], kind: 'sprite', img: S.hot, alpha: .9, add: true });
+    burst(ctx, cam, t, { t0: e.t, n: Math.round(70 * mg + 30), seed: e.t * 13 | 0, pos: m, speed: [3, 12 + mg * 6], dir: 'sphere', gravity: 9, life: [.3, .95], size: [.012, .03], kind: 'streak', color: '#e6f0ff', alpha: 1, add: true, floor: .05 });
+    burst(ctx, cam, t, { t0: e.t, n: 40, seed: e.t * 29 | 0, pos: m, speed: [1, 5], dir: 'sphere', gravity: 4, life: [.4, 1.2], size: [.03, .07], kind: 'sprite', img: S.white, alpha: .9, add: true });
     const a = t - e.t; if (a >= 0 && a < .22) { const p = cam.project(...m); if (p) add(ctx, () => { const d = p.s * (3.5 + 3 * mg) * (1 - a), g = 1 - a / .22; ctx.globalAlpha = g * .95; ctx.drawImage(S.hot, p.x - d / 2, p.y - d / 2, d, d); ctx.globalAlpha = 1; }); }
     if (t >= e.t) ringOnGround(ctx, cam, m[0], w.wl, m[2], (t - e.t) * 6, clamp(1 - (t - e.t) / .7) * .5, 1.5);
   }
@@ -58,10 +60,12 @@ export function drawFXFront(ctx, cam, t, w) {
   const st = T('stab'); const wp = wraithPos(st);
   burst(ctx, cam, t, { t0: st, n: 1500, seed: 7, pos: [wp[0], wp[1], wp[2] - .1], speed: [1.5, 9], dir: 'sphere', vel: [0, .6, -1.5], gravity: -.8, drag: .5, life: [1.0, 3.2], size: [.012, .075], kind: 'sprite', img: S.hot, alpha: 1, add: true });
   burst(ctx, cam, t, { t0: st, n: 90, seed: 8, pos: [wp[0], wp[1], wp[2] - .1], speed: [.5, 4], dir: 'sphere', vel: [0, .4, -1], gravity: -.4, drag: .7, life: [1.0, 2.2], size: [.1, .3], kind: 'sprite', img: S.orange, alpha: .3, add: true });
+  { const a = t - st; if (a >= 0 && a < 1.9) { const hp0 = heroPos(st), rc = cam.project(wp[0], wp[1], wp[2] - .12), gp = cam.project(hp0[0] - .5, hp0[1] + 1.15, hp0[2] - .15); if (rc && gp) { const k = 1 - sstep(1.2, 1.9, a), ex = lerp(gp.x + 900, rc.x, easeOut(clamp(a / .12)));
+      ctx.save(); ctx.globalAlpha = k; ctx.lineCap = 'round'; const g = ctx.createLinearGradient(rc.x, rc.y, gp.x + 900, gp.y); g.addColorStop(0, '#ffffff'); g.addColorStop(.12, '#dfeaf0'); g.addColorStop(1, '#6f8890'); ctx.strokeStyle = g; ctx.lineWidth = Math.max(6, rc.s * .03); ctx.beginPath(); ctx.moveTo(rc.x + 30, rc.y + 6); ctx.lineTo(gp.x + 900, gp.y); ctx.stroke(); ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(255,255,255,.9)'; ctx.beginPath(); ctx.moveTo(rc.x + 30, rc.y + 3); ctx.lineTo(gp.x + 900, gp.y - 2); ctx.stroke(); ctx.restore(); } } }
   // scream blast
   const bl = T('blast'); { const a = t - bl; if (a >= 0 && a < 1.2) { const wp2 = wraithPos(bl), r = easeOut(a / 1.2) * 11;
     ringOnGround(ctx, cam, wp2[0], w.wl, wp2[2], r, (1 - a / 1.2) * .6, 3); ringOnGround(ctx, cam, wp2[0], w.wl, wp2[2], r * .7, (1 - a / 1.2) * .35, 2);
-    const q = cam.project(wp2[0], wp2[1] + .3, wp2[2]); if (q) { const rr = easeOut(a / .6) * q.s * 6; ctx.save(); ctx.strokeStyle = `rgba(255,170,90,${(1 - a / .6) * .55})`; ctx.lineWidth = 6 * (1 - a / .6) + 1; if (a < .6) { ctx.beginPath(); ctx.arc(q.x, q.y, rr, 0, TAU); ctx.stroke(); } ctx.restore(); } } }
+    const q = cam.project(wp2[0], wp2[1] + .3, wp2[2]); if (q) { const rr = easeOut(a / .6) * q.s * 6; ctx.save(); ctx.strokeStyle = `rgba(230,240,250,${(1 - a / .6) * .55})`; ctx.lineWidth = 6 * (1 - a / .6) + 1; if (a < .6) { ctx.beginPath(); ctx.arc(q.x, q.y, rr, 0, TAU); ctx.stroke(); } ctx.restore(); } } }
   // hero water spray while sliding / charging / walking
   const sprayOn = (t0, t1, k = 1, seed = 20) => stream(ctx, cam, t, { t0, t1, rate: 90 * k, life: [.5, 1.2], posAt: (ts) => { const h = heroPos(ts); return [h[0], w.wl, h[2]]; }, speed: [1, 5], dir: 'up', vel: [0, 0, 0], gravity: 9, life2: 1, size: [.012, .035], kind: 'sprite', img: S.white, alpha: .75, floor: w.wl - .02, jitter: .5, seed });
   sprayOn(13.6, 15.2, 1.6, 20); sprayOn(19.4, 21.3, 1.8, 21); sprayOn(47.8, 50, .4, 22); sprayOn(36.0, 36.9, 1.0, 23);
@@ -149,9 +153,16 @@ function drawVortex(ctx, cam, t, back) {
   ctx.globalAlpha = 1;
 }
 function drawColumn(ctx, cam, t, back) {
-  const bh = T('ball_hit'), a = t - bh; if (a < 0 || a > 3.2) return;
-  const g = easeOut(clamp(a / .7)), f = 1 - sstep(.9, 3.2, a); const bx = 4.6, bz = 7.0;
-  for (let k = 0; k < 18; k++) { const u = k / 18, y = u * 9 * g, r = (.8 + Math.sin(u * 3.1) * 2.2 + u * .6) * (.6 + g * .5); const p = cam.project(bx + Math.sin(k * 1.3) * .5 * u, y, bz); if (!p) continue;
-    const d = p.s * r * 2; ctx.globalAlpha = f * (.75 - u * .35); ctx.drawImage(S.dust[k % 3], p.x - d / 2, p.y - d / 2, d, d); }
+  const bh = T('ball_hit'), a = t - bh; if (a < 0 || a > 3.4) return;
+  const g = easeOut(clamp(a / .75)), f = 1 - sstep(1.0, 3.4, a); const bx = 4.6, bz = 7.0;
+  for (let k = 0; k < 30; k++) {
+    const u = k / 30, y = u * 10 * g, r = (.7 + Math.sin(u * 3.1) * 1.9 + u * .8) * (.5 + g * .6) * (1 - .25 * Math.cos(k * 2.3));
+    const dx = Math.sin(k * 1.3 + a * 1.4) * .6 * u, p = cam.project(bx + dx, y, bz + Math.cos(k) * .3); if (!p) continue; const d = p.s * r * 2;
+    ctx.globalAlpha = f * (.92 - u * .35); ctx.drawImage(S.spray[k % 3], p.x - d / 2, p.y - d / 2, d, d);
+  }
+  // crown: ring of spray fingers at the base
+  for (let k = 0; k < 26; k++) { const th = k / 26 * TAU, rr = 1.2 + 2.4 * easeOut(clamp(a / 1.1)), h = Math.sin(clamp(a / 1.4) * Math.PI) * (1.4 + 1.1 * Math.sin(k * 5.1));
+    const p0 = cam.project(bx + Math.cos(th) * rr, 0, bz + Math.sin(th) * rr), p1 = cam.project(bx + Math.cos(th) * rr * 1.15, h, bz + Math.sin(th) * rr * 1.15); if (!p0 || !p1) continue;
+    ctx.globalAlpha = f * .85; ctx.strokeStyle = 'rgba(240,248,252,.9)'; ctx.lineWidth = Math.max(1.5, p0.s * .08); ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.stroke(); }
   ctx.globalAlpha = 1;
 }

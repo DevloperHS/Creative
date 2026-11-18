@@ -159,13 +159,13 @@ def shot3(bus):
     for i, tt in enumerate(np.linspace(37.2, 38.6, 10)): bus.add(taiko(.5 + i * .07, 1.1), tt, .6 + i * .05, 0, send=.3)
     rf = T('red_flood'); bus.add(sub_boom(3.0, 90, 26), rf + .1, 1.5, 0, send=.3); bus.add(roar(2.8, 1.0), rf + .1, .8, 0, send=.5)
 
-def shot4(bus):
+def shot4(bus, fg):
     dm = T('demon')
     # the score drops out: only the thing itself — its roar, thundering steps, rumble
-    bus.add(roar(3.0, 1.0), dm - .1, 1.0, 0, send=.5)
+    fg.add(roar(3.0, 1.0), dm - .1, 1.0, 0, send=.5)
     tt = dm + .1; gap = .5; i = 0
     while tt < dm + 3.0:
-        bus.add(sub_boom(1.2, 80, 28), tt, .9 + i * .04, 0, send=.25); bus.add(splash(.9, .7, 1.1, 300 + i), tt, .4 + i * .02, R.uniform(-.3, .3), send=.2)
+        fg.add(sub_boom(1.2, 80, 28), tt, .9 + i * .04, 0, send=.25); fg.add(splash(.9, .7, 1.1, 300 + i), tt, .4 + i * .02, R.uniform(-.3, .3), send=.2)
         tt += gap; gap = max(.2, gap * .88); i += 1
     bus.add(lp(pink(3.4, 9), 220) * swell(3.4, 1.2, 1.2) * 2.5, dm, .5, 0, send=.2)
     # hero breathes
@@ -193,7 +193,6 @@ def shot4(bus):
     bus.add(strings([HZ(62), HZ(66), HZ(69), HZ(74)], 3.4, 1.2, 1.2, 2.4, .3), 47.8, .5, 0, send=.6)
 
 def build():
-    bus = Bus(D + 4)
-    heartbeat(bus); bed(bus); shot1(bus); shot2(bus); shot3(bus); shot4(bus)
-    # whispers in the final act are intentionally absent from the music bed
-    return bus
+    bus = Bus(D + 4); fg = Bus(D + 4)
+    heartbeat(bus); bed(bus); shot1(bus); shot2(bus); shot3(bus); shot4(bus, fg)
+    return bus, fg

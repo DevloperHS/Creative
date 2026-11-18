@@ -20,6 +20,7 @@ function drawOne(ctx, cam, o, pos, vel, age, life, rnd) {
   const size = lerp(o.size[0], o.size[1], rnd) * (o.grow ? 1 + o.grow * u : 1) * (o.shrink ? 1 - u * .6 : 1);
   const d = size * q.s; if (d < .25) return;
   const a = (o.alpha ?? 1) * fade; if (a < .01) return;
+  if (o.kind === 'plank') { ctx.globalAlpha = a; ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(rnd * 6.28 + age * (o.spin || 6) * (rnd - .5) * 2); ctx.fillStyle = o.color || '#3a2c20'; ctx.fillRect(-d / 2, -d * .07, d, d * .14); ctx.fillStyle = 'rgba(190,200,205,.18)'; ctx.fillRect(-d / 2, -d * .07, d, d * .03); ctx.restore(); return; }
   if (o.kind === 'streak') {
     const q2 = cam.project(pos[0] - vel[0] * .018, pos[1] - vel[1] * .018, pos[2] - vel[2] * .018); if (!q2) return;
     ctx.globalAlpha = a; ctx.strokeStyle = o.color || '#fff'; ctx.lineWidth = Math.max(.8, d * .4); ctx.beginPath(); ctx.moveTo(q.x, q.y); ctx.lineTo(q2.x, q2.y); ctx.stroke();

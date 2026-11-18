@@ -7,8 +7,8 @@ mp4, outdir = sys.argv[1], sys.argv[2]
 os.makedirs(outdir, exist_ok=True)
 def grab(t, name):
     subprocess.run(['ffmpeg', '-hide_banner', '-loglevel', 'error', '-y', '-ss', f'{t:.3f}', '-i', mp4, '-frames:v', '1', os.path.join(outdir, name)], check=True)
-for i in range(25):
-    t = min(49.9, i * 2.0 + 0.5); grab(t, f'still_{t:05.1f}s.png')
+for t in sorted(set([i * 2.0 + 0.5 for i in range(25)] + [4.3, 11.9, 14.2, 21.6, 27.7, 33.0, 45.5, 47.5, 49.0, 49.4, 49.8])):
+    grab(min(49.95, t), f'still_{t:05.1f}s.png')
 for t in (3.9, 6.4, 11.7, 13.6, 21.3, 27.5, 35.5, 39.6):   # action beats: 3 consecutive frames side by side
     fs = []
     for k in range(3):

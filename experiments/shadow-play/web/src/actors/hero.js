@@ -30,7 +30,7 @@ export function drawHero(ctx, hero, view, t, glow, flip, rim = [255, 140, 60]) {
     ctx.globalAlpha = 1;
   };
   if (view === 'side') {
-    if (P.hood < .5) drawHair(.95);
+    drawHair(P.hood < .5 ? .95 : .85);
     // ---- legs ----
     ctx.strokeStyle = '#06080a'; ctx.lineCap = 'round'; ctx.lineWidth = .17;
     const stride = hero.walk > 0 ? Math.sin(t * 5.2) * .28 * hero.walk : 0;
@@ -41,6 +41,9 @@ export function drawHero(ctx, hero, view, t, glow, flip, rim = [255, 140, 60]) {
     // ---- cloak ----
     const hem = -.12 + k * .08, tail = -vxl * .07 + wind * .18;
     const hemPts = []; for (let i = 0; i <= 7; i++) { const u = i / 7; hemPts.push([lerp(-.34 - k * .12, .30 + k * .1, u) + tail * (1 - u) * 1.6 + Math.sin(t * 4 + i * 1.3) * .03, hem + Math.sin(t * 3.3 + i * 2.1) * .035 + (i === 0 ? .03 : 0) - Math.max(0, -wind) * .12 * (1 - u)]); }
+    { const fl = new Path2D(); const bx = sx - .08; fl.moveTo(bx, sy - .02); fl.bezierCurveTo(bx - .3 + tail, sy + .2, bx - .55 + tail * 1.6, hipY * .6, bx - .62 + tail * 2.2, hem + .08);
+      for (let i = 0; i < 7; i++) { const u = i / 6; fl.lineTo(bx - .62 + tail * 2.2 + u * .5 + Math.sin(t * 4 + i * 2) * .03, hem + .08 + (i % 2 ? .14 : .02) + Math.sin(t * 3 + i) * .03); }
+      fl.lineTo(hemPts[0][0] + .1, hem); fl.closePath(); ctx.fillStyle = '#0d1419'; ctx.fill(fl); ctx.strokeStyle = 'rgba(120,165,175,.4)'; ctx.lineWidth = .014; ctx.stroke(fl); }
     const cloak = new Path2D(); cloak.moveTo(sx - .02, sy - .04); cloak.bezierCurveTo(sx - .32, sy + .12, hemPts[0][0] - .06, hipY * .55, hemPts[0][0], hemPts[0][1]);
     for (let i = 1; i <= 7; i++) cloak.lineTo(hemPts[i][0], hemPts[i][1]);
     cloak.bezierCurveTo(.3 + k * .15, hipY * .6, sx + .22, sy + .15, sx + .1, sy - .03); cloak.closePath();
@@ -110,7 +113,7 @@ function drawArmsSword(ctx, P, sx, sy, hero, t, tm, glow, rim) {
   const arm = (shx, shy, hx, hy, bend, col) => {
     const el = ik(shx, shy, hx, hy, .31, .30, bend);
     ctx.strokeStyle = col; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = .11; ctx.beginPath(); ctx.moveTo(shx, shy); ctx.lineTo(el[0], el[1]); ctx.lineTo(hx, hy); ctx.stroke();
-    ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(hx, hy, .034, 0, TAU); ctx.fill();
+    ctx.fillStyle = SKIN; ctx.beginPath(); ctx.arc(hx, hy, .046, 0, TAU); ctx.fill(); ctx.fillStyle = '#8f9da1'; ctx.beginPath(); ctx.arc(hx + .008, hy + .012, .028, 0, TAU); ctx.fill(); ctx.strokeStyle = SKIN; ctx.lineWidth = .014; for (let f = 0; f < 3; f++) { ctx.beginPath(); ctx.moveTo(hx, hy + (f - 1) * .02); ctx.lineTo(hx + .05, hy + (f - 1) * .024 + .012); ctx.stroke(); }
   };
   const shx = sx + .02, shy = sy + .06;
   // back arm (second hand) first, sword over it
