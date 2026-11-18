@@ -5,7 +5,7 @@ import { add } from '../gfx/draw.js';
 /** A line of doubt burning into the smoke, then dissolving into ash. anchor is world [x,y,z]. */
 export function drawDoubt(ctx, cam, t, ev, anchor, opts = {}) {
   const dur = opts.dur ?? 2.6, a0 = t - ev.t; if (a0 < 0 || a0 > dur + .2) return;
-  const p = cam.project(anchor[0], anchor[1], anchor[2]); if (!p) return;
+  const p = cam.project(anchor[0], anchor[1], anchor[2]); if (!p) return; p.x += opts.ox || 0; p.y += opts.oy || 0;
   const px = opts.px ? opts.px : clamp(opts.m ?? .26, .05, 3) * p.s * 1.0; if (px < 5) return;
   const str = ev.text, n = str.length;
   ctx.save(); ctx.font = `italic ${px}px "DejaVu Serif", Georgia, serif`; ctx.textBaseline = 'middle';

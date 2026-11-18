@@ -2,7 +2,7 @@
 import { createRequire } from 'node:module'; const { chromium } = createRequire('/opt/node22/lib/node_modules/')('playwright'); import fs from 'node:fs'; import { serve } from './serve.mjs';
 const [outdir, ...ts] = process.argv.slice(2); fs.mkdirSync(outdir, { recursive: true });
 const { server, url } = await serve();
-const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] }); const pg = await b.newPage({ viewport: { width: 1280, height: 720 } });
+const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] }); const pg = await b.newPage({ viewport: { width: 1920, height: 1080 } });
 pg.on('console', m => { if (m.type() === 'error') console.log('[page]', m.text()); }); pg.on('pageerror', e => console.log('[pageerror]', e.message));
 await pg.goto(url + 'web/index.html'); await pg.waitForFunction(() => window.__ready || window.__error, null, { timeout: 60000 });
 const err = await pg.evaluate(() => window.__error); if (err) { console.log('INIT ERROR', err); process.exit(1); }

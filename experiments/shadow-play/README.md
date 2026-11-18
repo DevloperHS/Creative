@@ -18,9 +18,9 @@ tools/                  serve.mjs · stills.mjs · render.mjs (parallel) · mux.
 out/                    shadow-play.mp4 (final), audio.wav
 ```
 
-## Rebuild
+## Rebuild (output: 1920×1080 @ 60 fps)
 ```bash
-node tools/render.mjs --workers 4        # ~2 min: 1200 frames, 5 sub-frames each (real motion blur)
+node tools/render.mjs --workers 4        # ~9 min: 3000 frames, 5 sub-frames each (real motion blur)
 python3 audio/build.py out/audio.wav     # ~10 s
 tools/mux.sh out/shadow-play.mp4
 node tools/stills.mjs out/stills 12 26.5 # quick look at specific timestamps
@@ -33,3 +33,8 @@ Needs: Node 22 + Playwright/Chromium, Python 3 with numpy, scipy, Pillow, ffmpeg
 * **Pseudo-3D.** A real pinhole camera (`camera.js`) drives billboards, a perspective water plane, orbits, cranes and whip-pans.
 * **Wraith "mirrors half a second late"** is literal: during the kneel (15–19 s) its position is `2c − hero(t − 0.5)`.
 * **Picture and sound share cues** (`events.json`), so every clash, splash and the heartbeat tempo land on the exact frame.
+
+## Status & honest limitations
+Five critique→fix rounds were run, each by a fresh reviewer agent working only from frames/stills + spectrogram extracted from the final mp4.
+Remaining weaknesses the last reviewer still flagged: stylised flat-vector characters (not photoreal), the demon is a scaled/bulked wraith,
+the shot-1→2 join and the red-mist join read as near-cuts, and sound could only be verified through spectrogram/loudness numbers (not by ear).

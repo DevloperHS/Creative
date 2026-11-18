@@ -6,7 +6,7 @@ from instruments import *
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 J = json.load(open(os.path.join(HERE, '..', 'shared', 'events.json')))
-EV = {}
+EV = {}; FG = None
 for e in J['events']: EV.setdefault(e['name'], []).append(e)
 T = lambda n, i=0: EV[n][i]['t']
 D = 50.0
@@ -140,8 +140,8 @@ def shot3(bus):
     for i, tt in enumerate([28.6, 29.3, 30.0, 30.9]):
         bus.add(whisper([1, 1, 1, 1], .2, 1.0, seed=120 + i, f_scale=.9), tt, .5 - i * .08, (-1) ** i * .6, send=.6)
     bus.add(whisper([1, 1, 1], .35, 1.0, seed=130, f_scale=.85), 31.2, .55, 0, send=.5)
-    br = T('breath'); bus.add(breath(2.3, True, 1.0, 21), br, .95, 0, send=.3)
-    bus.add(sub_boom(2.0, 55, 28), br + 1.9, .6, 0)          # the held breath: one slow beat
+    br = T('breath'); FG.add(breath(2.3, True, 1.0, 21), br, 1.1, 0, send=.35)
+    FG.add(sub_boom(2.0, 55, 28), br + 1.9, .5, 0)          # the held breath: one slow beat
     # rise
     bus.add(strings([73.4, 110, 146.8, 220], 2.0, 1.0, .9, 1.4, .3), 33.3, .5, 0, send=.4)
     bus.add(whoosh(.9, 300, 3000, 1, seed=70), 33.6, .6, 0, send=.3)
@@ -159,13 +159,16 @@ def shot3(bus):
     for i, tt in enumerate(np.linspace(37.2, 38.6, 10)): bus.add(taiko(.5 + i * .07, 1.1), tt, .6 + i * .05, 0, send=.3)
     rf = T('red_flood'); bus.add(sub_boom(3.0, 90, 26), rf + .1, 1.5, 0, send=.3); bus.add(roar(2.8, 1.0), rf + .1, .8, 0, send=.5)
 
+def wide(bus, sig, t0, g, send):
+    bus.add(sig, t0, g * .72, -.8, send=send); bus.add(np.roll(sig, int(.017 * SR)), t0, g * .72, .8, send=send)
+
 def shot4(bus, fg):
     dm = T('demon')
     # the score drops out: only the thing itself — its roar, thundering steps, rumble
-    fg.add(roar(3.0, 1.0), dm - .1, 1.0, 0, send=.5)
+    fg.add(roar(2.4, 1.0), dm - .1, .55, 0, send=.5)
     tt = dm + .1; gap = .5; i = 0
-    while tt < dm + 3.0:
-        fg.add(sub_boom(1.2, 80, 28), tt, .9 + i * .04, 0, send=.25); fg.add(splash(.9, .7, 1.1, 300 + i), tt, .4 + i * .02, R.uniform(-.3, .3), send=.2)
+    while tt < dm + 2.2:
+        fg.add(sub_boom(1.2, 80, 28), tt, .45 + i * .02, 0, send=.25); fg.add(splash(.9, .7, 1.1, 300 + i), tt, .35 + i * .02, R.uniform(-.3, .3), send=.2)
         tt += gap; gap = max(.2, gap * .88); i += 1
     bus.add(lp(pink(3.4, 9), 220) * swell(3.4, 1.2, 1.2) * 2.5, dm, .5, 0, send=.2)
     # hero breathes
@@ -181,18 +184,19 @@ def shot4(bus, fg):
     bus.add(cello(HZ(38), 6.0, 1.0), 44.0, .6, -.15, send=.5)   # D2
     for i, m in enumerate([62, 66, 69, 74, 69, 66, 62, 66, 69, 74, 78, 74]):
         bus.add(piano(HZ(m), 3.4, 1.0, .5 + .02 * i), 44.4 + i * .52, .5, -.2 + .04 * i, send=.5)
-    bus.add(strings([HZ(50), HZ(57), HZ(62), HZ(66)], 6.2, 1.0, .9, 3.0, 2.5), 44.6, .55, 0, send=.55)
-    bus.add(strings([HZ(62), HZ(69), HZ(74), HZ(78)], 5.0, 1.1, 1.0, 2.8, 2.0), 46.0, .55, .1, send=.55)
-    bus.add(choir([HZ(62), HZ(66), HZ(69), HZ(74)], 4.6, 1.0, 'a', 2.2, 1.5), 45.8, .55, 0, send=.7)
-    bus.add(choir([HZ(74), HZ(78), HZ(81)], 3.6, 1.0, 'o', 1.8, 1.4), 46.8, .38, 0, send=.7)
+    wide(bus, strings([HZ(50), HZ(57), HZ(62), HZ(66)], 6.2, 1.0, .9, 3.0, 2.5), 44.6, .55, .55)
+    wide(bus, strings([HZ(62), HZ(69), HZ(74), HZ(78)], 5.0, 1.1, 1.0, 2.8, 2.0), 46.0, .55, .55)
+    wide(bus, choir([HZ(62), HZ(66), HZ(69), HZ(74)], 4.6, 1.0, 'a', 2.2, 1.5), 45.8, .55, .7)
+    wide(bus, choir([HZ(74), HZ(78), HZ(81)], 3.6, 1.0, 'o', 1.8, 1.4), 46.8, .38, .7)
     bus.add(sub_boom(4.0, 36, 30), 46.4, .3, 0)
     # sheathing + footsteps in water, soft
     sh = T('sheathe'); bus.add(metal_ring(2600, 1.4, .5, 600) * .4, sh, .35, .2, send=.4)
     for i, tt in enumerate(np.arange(T('walk'), 50.0, .62)): bus.add(splash(.55, .4, .25, 700 + i), tt, .22, R.uniform(-.2, .2), send=.4)
     # bloom of the fade
-    bus.add(strings([HZ(62), HZ(66), HZ(69), HZ(74)], 3.4, 1.2, 1.2, 2.4, .3), 47.8, .5, 0, send=.6)
+    wide(bus, strings([HZ(62), HZ(66), HZ(69), HZ(74)], 3.4, 1.2, 1.2, 2.4, .3), 47.8, .5, .6)
 
 def build():
-    bus = Bus(D + 4); fg = Bus(D + 4)
+    global FG
+    bus = Bus(D + 4); fg = Bus(D + 4); FG = fg
     heartbeat(bus); bed(bus); shot1(bus); shot2(bus); shot3(bus); shot4(bus, fg)
     return bus, fg
