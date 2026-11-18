@@ -39,7 +39,7 @@ const POSE_KEYS = [
   [12.6, 'GUARD'], [13.45, 'STAGGER'], [14.0, 'SKID'], [15.0, 'PANT'], [16.2, 'PANT'], [18.2, 'RESOLVE'], [19.1, 'CHARGE'], [20.9, 'CHARGE'],
   [21.0, 'LEAPUP'], [21.3, 'LEAPUP'], [21.9, 'LAND'], [22.6, 'CROUCH'], [24.8, 'GUARD'], [27.35, 'GUARD'], [27.8, 'THROWN'], [28.7, 'HURT'], [32.2, 'HURT'],
   [33.6, 'GRIP'], [34.0, 'RISE'], [34.3, 'LEAPUP'], [35.0, 'LEAPUP'], [35.5, 'AIRSTR'], [36.2, 'LAND'], [37.0, 'CROUCH'], [38.6, 'GUARD'],
-  [39.3, 'GUARD'], [40.6, 'LOWER'], [41.2, 'LOWER'], [44.6, 'LOWER'], [45.8, 'LOOKUP'], [46.5, 'STAND'], [47.2, 'STAND'], [47.7, 'SHEATHE'], [48.1, 'WALK'], [50, 'WALK'],
+  [39.3, 'GUARD'], [40.6, 'LOWER'], [41.2, 'LOWER'], [44.6, 'LOWER'], [45.8, 'LOOKUP'], [46.5, 'STAND'], [47.0, 'STAND'], [47.7, 'SHEATHE'], [48.3, 'WALK'], [50, 'WALK'],
 ];
 export function poseAt(t) {
   if (t <= POSE_KEYS[0][0]) return { ...PO[POSE_KEYS[0][1]] };

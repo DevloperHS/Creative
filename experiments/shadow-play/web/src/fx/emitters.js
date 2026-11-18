@@ -85,7 +85,7 @@ export function drawFXFront(ctx, cam, t, w) {
   const ball = ballAt(t);
   if (ball) stream(ctx, cam, t, { t0: 24.8, t1: 27.4, rate: 50, life: [.6, 1.4], posAt: (ts) => { const b = ballAt(ts); return b ? [b.x, b.y, b.z] : null; }, speed: [.2, 1.4], dir: 'sphere', gravity: -.4, jitter: ball.r * .8, size: [.01, .03], kind: 'dot', color: '#050505', alpha: .9, seed: 41 });
   const bh = T('ball_hit'), bp = [4.6, 0.0, 7.0];
-  burst(ctx, cam, t, { t0: bh, n: 2200, seed: 51, pos: bp, speed: [4, 17], dir: 'up', gravity: 9.8, drag: .15, life: [1.0, 2.4], size: [.02, .1], kind: 'sprite', img: S.white, alpha: .85, floor: .02, jitter: 1.2 });
+  burst(ctx, cam, t, { t0: bh, n: 1000, seed: 51, pos: bp, speed: [4, 17], dir: 'up', gravity: 9.8, drag: .15, life: [1.0, 2.4], size: [.02, .1], kind: 'sprite', img: S.white, alpha: .5, floor: .02, jitter: 1.2 });
   burst(ctx, cam, t, { t0: bh, n: 450, seed: 52, pos: bp, speed: [3, 13], dir: 'up', gravity: 9.8, life: [.8, 1.8], size: [.03, .06], kind: 'streak', color: '#e8f4f8', alpha: .9, floor: .02, jitter: 1.0 });
   burst(ctx, cam, t, { t0: bh, n: 380, seed: 53, pos: bp, speed: [.8, 3.2], dir: 'up', gravity: .9, drag: .35, life: [3.5, 7], size: [.015, .05], kind: 'sprite', img: S.white, alpha: .75, floor: .02, jitter: 2.2, fadePow: .6 });
   burst(ctx, cam, t, { t0: bh, n: 110, seed: 54, pos: bp, speed: [1, 7], dir: 'disc', drag: 1.1, life: [1.4, 3], size: [1.2, 3.2], grow: 1.4, kind: 'sprite', img: S.dust, rot: 1, alpha: .6, floor: .1, jitter: 1.5 });
@@ -109,6 +109,9 @@ export function drawFXFront(ctx, cam, t, w) {
   const dm = demonAt(t); if (dm && dm.crumble > 0) stream(ctx, cam, t, { t0: 43.4, t1: 44.8, rate: 140, life: [.7, 1.6], posAt: (ts) => { const d = demonAt(ts); if (!d) return null; return [d.x + (hash(ts * 11) - .5) * 7, d.y - .5 + hash(ts * 3) * 2, d.z - 1]; }, speed: [.3, 2], dir: 'sphere', gravity: 6, size: [.04, .14], kind: 'dot', color: '#4a2a14', alpha: 1, floor: w.wl, seed: 95 });
   // the demon was only smoke: a rolling mass over the beach that thins and lifts away
   { const cr = seg(t, 43.4, 44.6), lift = sstep(44.8, 47.5, t), a = cr * (1 - lift); if (a > .01) for (let i = 0; i < 26; i++) { const th = i / 26 * TAU + t * .5 * (i % 2 ? 1 : -1), r = (1.2 + hash(i * 3) * 3.5) * (1 + cr * .6); const p = cam.project(5 + Math.cos(th) * r, 1.2 + hash(i) * 3 + lift * 6, 11 + Math.sin(th) * r * .8); if (!p) continue; const d = p.s * (3.5 + hash(i + 7) * 3); ctx.globalAlpha = a * .75; ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(i + t * .3); ctx.drawImage(S.smoke[i % 4], -d / 2, -d / 2, d, d); ctx.restore(); } ctx.globalAlpha = 1; }
+  // spray thrown up by the charging demon + ambient ash through every shot
+  { const dm2 = demonAt(t); if (dm2 && dm2.alpha > .1) stream(ctx, cam, t, { t0: 40.4, t1: 43.4, rate: 140, life: [.6, 1.4], posAt: (ts) => { const d = demonAt(ts); return d ? [d.x + (hash(ts * 9) - .5) * 3.5, w.wl, d.z - .5] : null; }, speed: [2, 8], dir: 'up', gravity: 9, size: [.03, .09], kind: 'sprite', img: S.white, alpha: .6, jitter: 1.2, floor: w.wl, seed: 97 }); }
+  stream(ctx, cam, t, { t0: 0, t1: 50, rate: 45, life: [4, 7], posAt: (ts) => { const r = rng(ts * 53 | 0); return [cam.x + (r() - .5) * 18, .2 + r() * 4, cam.z + 1.5 + r() * 16]; }, speed: [.03, .25], dir: 'sphere', vel: [.25, .12, .05], size: [.014, .04], kind: 'dot', color: '#aab3b4', alpha: .45, fadePow: .5, seed: 98 });
   // golden motes in the light
   if (w.sunBreak > .1) stream(ctx, cam, t, { t0: 45.5, t1: 50, rate: 70, life: [3, 6], posAt: (ts) => { const r = rng(ts * 77 | 0); return [cam.x + (r() - .3) * 16, .5 + r() * 5, cam.z + 2 + r() * 14]; }, speed: [.02, .2], dir: 'sphere', vel: [.1, .15, .2], size: [.012, .03], kind: 'dot', color: '#ffe2a8', alpha: .85, add: true, fadePow: .4, seed: 99 });
 }
@@ -158,7 +161,7 @@ function drawColumn(ctx, cam, t, back) {
   for (let k = 0; k < 30; k++) {
     const u = k / 30, y = u * 10 * g, r = (.7 + Math.sin(u * 3.1) * 1.9 + u * .8) * (.5 + g * .6) * (1 - .25 * Math.cos(k * 2.3));
     const dx = Math.sin(k * 1.3 + a * 1.4) * .6 * u, p = cam.project(bx + dx, y, bz + Math.cos(k) * .3); if (!p) continue; const d = p.s * r * 2;
-    ctx.globalAlpha = f * (.92 - u * .35); ctx.drawImage(S.spray[k % 3], p.x - d / 2, p.y - d / 2, d, d);
+    ctx.globalAlpha = f * (.62 - u * .25); ctx.drawImage(S.spray[k % 3], p.x - d / 2, p.y - d / 2, d, d);
   }
   // crown: ring of spray fingers at the base
   for (let k = 0; k < 26; k++) { const th = k / 26 * TAU, rr = 1.2 + 2.4 * easeOut(clamp(a / 1.1)), h = Math.sin(clamp(a / 1.4) * Math.PI) * (1.4 + 1.1 * Math.sin(k * 5.1));

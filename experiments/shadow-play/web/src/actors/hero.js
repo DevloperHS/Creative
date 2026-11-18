@@ -100,13 +100,15 @@ function drawArmsSword(ctx, P, sx, sy, hero, t, tm, glow, rim) {
   const hilt0 = [gx - dx * .38, gy - dy * .38], tsuba = [gx + dx * .22, gy + dy * .22], tip = [gx + dx * L, gy + dy * L];
   const nx = -dy, ny = dx, bow = .035;
   const drawSword = () => {
-    if (P.sheathed > .5) { // scabbard at hip
+    const sh = P.sheathed;
+    if (sh > .02) { // scabbard at the hip; the blade slides in as `sheathed` rises
       ctx.strokeStyle = '#0b0d10'; ctx.lineWidth = .045; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(gx - dx * .4, gy - dy * .4); ctx.lineTo(gx + dx * 1.0, gy + dy * 1.0); ctx.stroke();
-      ctx.strokeStyle = '#2b3438'; ctx.lineWidth = .012; ctx.stroke(); return;
+      ctx.strokeStyle = '#2b3438'; ctx.lineWidth = .012; ctx.stroke(); if (sh > .98) return;
     }
     ctx.strokeStyle = '#14181b'; ctx.lineWidth = .05; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(hilt0[0], hilt0[1]); ctx.lineTo(tsuba[0], tsuba[1]); ctx.stroke();
     ctx.fillStyle = '#6a5a3a'; ctx.beginPath(); ctx.ellipse(tsuba[0], tsuba[1], .018, .055, ang, 0, TAU); ctx.fill();
-    ctx.strokeStyle = BLADE; ctx.lineWidth = .017; ctx.beginPath(); ctx.moveTo(tsuba[0], tsuba[1]); ctx.quadraticCurveTo((tsuba[0] + tip[0]) / 2 + nx * bow, (tsuba[1] + tip[1]) / 2 + ny * bow, tip[0], tip[1]); ctx.stroke();
+    const bl = 1 - P.sheathed; const tp = [tsuba[0] + (tip[0] - tsuba[0]) * bl, tsuba[1] + (tip[1] - tsuba[1]) * bl];
+    ctx.strokeStyle = BLADE; ctx.lineWidth = .017; ctx.beginPath(); ctx.moveTo(tsuba[0], tsuba[1]); ctx.quadraticCurveTo((tsuba[0] + tp[0]) / 2 + nx * bow * bl, (tsuba[1] + tp[1]) / 2 + ny * bow * bl, tp[0], tp[1]); ctx.stroke();
     ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = .006; ctx.stroke();
     if (glow && glow.i > .05) { ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.strokeStyle = `rgba(${rim},${.5 * glow.i})`; ctx.lineWidth = .012; ctx.beginPath(); ctx.moveTo(tsuba[0], tsuba[1]); ctx.quadraticCurveTo((tsuba[0] + tip[0]) / 2 + nx * bow, (tsuba[1] + tip[1]) / 2 + ny * bow, tip[0], tip[1]); ctx.stroke(); ctx.restore(); }
   };

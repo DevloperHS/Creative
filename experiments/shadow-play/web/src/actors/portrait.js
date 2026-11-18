@@ -12,7 +12,7 @@ export function drawPortrait(ctx, hero, t, glow, rim = [255, 140, 60]) {
   ctx.fillStyle = '#040506'; ctx.beginPath(); ctx.moveTo(-.2, -.12); ctx.bezierCurveTo(-.3, .1, -.26, .45, -.22, .62 + wind); ctx.lineTo(-.12, .3); ctx.lineTo(.12, .3); ctx.lineTo(.22, .62 - wind); ctx.bezierCurveTo(.26, .45, .3, .1, .2, -.12); ctx.closePath(); ctx.fill();
   if (hood) { ctx.fillStyle = '#06080b'; ctx.beginPath(); ctx.moveTo(-.34, .3); ctx.bezierCurveTo(-.4, -.08, -.28, -.36, 0, -.38); ctx.bezierCurveTo(.28, -.36, .4, -.08, .34, .3); ctx.lineTo(.2, .1); ctx.bezierCurveTo(.16, -.18, -.16, -.18, -.2, .1); ctx.closePath(); ctx.fill(); }
   // --- neck + face
-  ctx.fillStyle = '#7d8a8e'; ctx.beginPath(); ctx.rect(-.055, .1, .11, .17); ctx.fill();
+  ctx.fillStyle = '#7d8a8e'; ctx.beginPath(); ctx.moveTo(-.06, .1); ctx.bezierCurveTo(-.05, .2, -.075, .24, -.12, .27); ctx.lineTo(.12, .27); ctx.bezierCurveTo(.075, .24, .05, .2, .06, .1); ctx.closePath(); ctx.fill(); ctx.fillStyle = 'rgba(15,25,30,.35)'; ctx.beginPath(); ctx.ellipse(0, .13, .07, .03, 0, 0, TAU); ctx.fill();
   const lit = glow && glow.x !== 0 ? Math.sign(glow.x) : -1;
   const face = new Path2D(); face.moveTo(-.1, -.1); face.bezierCurveTo(-.112, .04, -.085, .13, -.03, .182); face.quadraticCurveTo(0, .2, .03, .182); face.bezierCurveTo(.085, .13, .112, .04, .1, -.1); face.bezierCurveTo(.08, -.165, -.08, -.165, -.1, -.1); face.closePath();
   const fg = ctx.createLinearGradient(-.11, 0, .11, 0); fg.addColorStop(lit < 0 ? 0 : 1, '#c4ccce'); fg.addColorStop(lit < 0 ? 1 : 0, '#59676c'); ctx.fillStyle = fg; ctx.fill(face);
@@ -31,7 +31,7 @@ export function drawPortrait(ctx, hero, t, glow, rim = [255, 140, 60]) {
   ctx.strokeStyle = '#080b0d'; ctx.lineWidth = .011; ctx.lineCap = 'round';
   for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(s * .088, -.062 - brow * .3 + sm * .004); ctx.quadraticCurveTo(s * .058, -.078 - brow, s * .022, -.058 - brow * 1.6 * (fear > .5 ? 1 : 0.4)); ctx.stroke(); }
   // --- eyes
-  const open = lerp(.62, 1.0, fear) * lerp(1, .5, sm), ey = -.032, look = (hero.look || 0) * .012;
+  const blink = (t > 32.2 && t < 33.6) ? Math.sin(clamp((t - 32.2) / 1.4) * Math.PI) : (Math.sin(t * 1.7) > .985 ? .8 : 0); const open = Math.max(.08, lerp(.62, 1.0, fear) * lerp(1, .5, sm) * (1 - blink * .92)), ey = -.032, look = (hero.look || 0) * .012;
   for (const s of [-1, 1]) {
     const ex = s * .05;
     ctx.fillStyle = 'rgba(15,22,26,.5)'; ctx.beginPath(); ctx.ellipse(ex, ey - .002, .034, .021 * open + .006, 0, 0, TAU); ctx.fill();
@@ -52,6 +52,7 @@ export function drawPortrait(ctx, hero, t, glow, rim = [255, 140, 60]) {
   else { ctx.beginPath(); ctx.moveTo(-mw, my - sm * .01 + fear * .004); ctx.quadraticCurveTo(0, my + sm * .014 + fear * .004 - .002, mw, my - sm * .01 + fear * .004); ctx.stroke(); }
   // --- wet highlights + sweat streaks
   ctx.fillStyle = 'rgba(255,255,255,.3)'; ctx.beginPath(); ctx.ellipse(lit * .045, .0, .005, .028, .1, 0, TAU); ctx.fill();
+  if (fear > .6 || (t > 29 && t < 34)) { ctx.strokeStyle = 'rgba(200,220,228,.55)'; ctx.lineWidth = .004; for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(s * .058, -.006); ctx.quadraticCurveTo(s * .066, .05, s * .056, .1 + .03 * Math.sin(t * 2)); ctx.stroke(); } }
   if (fear > .3) { ctx.strokeStyle = 'rgba(210,225,230,.45)'; ctx.lineWidth = .003; for (let i = 0; i < 2; i++) { ctx.beginPath(); ctx.moveTo(-.06 + i * .12, -.01); ctx.lineTo(-.066 + i * .12, .1 + i * .02); ctx.stroke(); } }
   // --- warm rim light from the wraith side, cold fill on the other
   ctx.save(); ctx.globalCompositeOperation = 'lighter';

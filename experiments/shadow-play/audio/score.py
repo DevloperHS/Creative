@@ -6,7 +6,7 @@ from instruments import *
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 J = json.load(open(os.path.join(HERE, '..', 'shared', 'events.json')))
-EV = {}
+EV = {}; FG = None
 for e in J['events']: EV.setdefault(e['name'], []).append(e)
 T = lambda n, i=0: EV[n][i]['t']
 D = 50.0
@@ -140,8 +140,8 @@ def shot3(bus):
     for i, tt in enumerate([28.6, 29.3, 30.0, 30.9]):
         bus.add(whisper([1, 1, 1, 1], .2, 1.0, seed=120 + i, f_scale=.9), tt, .5 - i * .08, (-1) ** i * .6, send=.6)
     bus.add(whisper([1, 1, 1], .35, 1.0, seed=130, f_scale=.85), 31.2, .55, 0, send=.5)
-    br = T('breath'); bus.add(breath(2.3, True, 1.0, 21), br, .95, 0, send=.3)
-    bus.add(sub_boom(2.0, 55, 28), br + 1.9, .6, 0)          # the held breath: one slow beat
+    br = T('breath'); FG.add(breath(2.3, True, 1.0, 21), br, 1.1, 0, send=.35)
+    FG.add(sub_boom(2.0, 55, 28), br + 1.9, .5, 0)          # the held breath: one slow beat
     # rise
     bus.add(strings([73.4, 110, 146.8, 220], 2.0, 1.0, .9, 1.4, .3), 33.3, .5, 0, send=.4)
     bus.add(whoosh(.9, 300, 3000, 1, seed=70), 33.6, .6, 0, send=.3)
@@ -162,10 +162,10 @@ def shot3(bus):
 def shot4(bus, fg):
     dm = T('demon')
     # the score drops out: only the thing itself — its roar, thundering steps, rumble
-    fg.add(roar(3.0, 1.0), dm - .1, 1.0, 0, send=.5)
+    fg.add(roar(3.0, 1.0), dm - .1, .8, 0, send=.5)
     tt = dm + .1; gap = .5; i = 0
     while tt < dm + 3.0:
-        fg.add(sub_boom(1.2, 80, 28), tt, .9 + i * .04, 0, send=.25); fg.add(splash(.9, .7, 1.1, 300 + i), tt, .4 + i * .02, R.uniform(-.3, .3), send=.2)
+        fg.add(sub_boom(1.2, 80, 28), tt, .65 + i * .03, 0, send=.25); fg.add(splash(.9, .7, 1.1, 300 + i), tt, .35 + i * .02, R.uniform(-.3, .3), send=.2)
         tt += gap; gap = max(.2, gap * .88); i += 1
     bus.add(lp(pink(3.4, 9), 220) * swell(3.4, 1.2, 1.2) * 2.5, dm, .5, 0, send=.2)
     # hero breathes
@@ -193,6 +193,7 @@ def shot4(bus, fg):
     bus.add(strings([HZ(62), HZ(66), HZ(69), HZ(74)], 3.4, 1.2, 1.2, 2.4, .3), 47.8, .5, 0, send=.6)
 
 def build():
-    bus = Bus(D + 4); fg = Bus(D + 4)
+    global FG
+    bus = Bus(D + 4); fg = Bus(D + 4); FG = fg
     heartbeat(bus); bed(bus); shot1(bus); shot2(bus); shot3(bus); shot4(bus, fg)
     return bus, fg

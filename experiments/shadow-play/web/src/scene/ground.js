@@ -50,7 +50,7 @@ export function drawPath(ctx, cam, w) {
   for (let i = n - 1; i >= 0; i--) {
     const u = i / (n - 1), z = z0 + Math.pow(u, 1.6) * (PAGODA[2] - 30 - z0), x = lerp(x0, PAGODA[0] - 6, Math.pow(u, 1.6)) + Math.sin(i * 1.9) * (.35 * (1 - u) + .1);
     const reveal = clamp(w.path * 1.35 - u * .8 * 1.0, 0, 1); if (reveal <= 0) continue;
-    const p = cam.project(x, w.wl, z), p2 = cam.project(x + .9, w.wl, z), p3 = cam.project(x, w.wl, z + .7); if (!p || !p2 || !p3) continue;
+    const p = cam.project(x, w.wl, z), p2 = cam.project(x + 1.5, w.wl, z), p3 = cam.project(x, w.wl, z + 1.1); if (!p || !p2 || !p3) continue;
     const rx = Math.abs(p2.x - p.x), ry = Math.abs(p.y - p3.y); if (rx < .6) continue;
     ctx.globalAlpha = reveal;
     ctx.fillStyle = `rgb(${96 + ENV.sun * 70},${108 + ENV.sun * 60},${112 + ENV.sun * 30})`; ctx.beginPath(); ctx.ellipse(p.x, p.y, rx, Math.max(ry, rx * .2), 0, 0, 6.283); ctx.fill();

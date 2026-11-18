@@ -17,7 +17,7 @@ export function buildSky() {
   for (let i = 0; i < 70; i++) put(S.cloudDark[(R() * 4) | 0], R() * SW, SH * (.3 + R() * .5), 260 + R() * 420, .25 + R() * .25, (R() - .5) * .1);
   g.globalAlpha = 1;
   SUNSKY = mk(SW, SH); const s = SUNSKY.getContext('2d');
-  s.fillStyle = grad(s, 0, 0, 0, SH, [[0, '#49707c'], [.45, '#a8b9b6'], [.8, '#f1cf9b'], [1, '#ffe2b0']]); s.fillRect(0, 0, SW, SH);
+  s.fillStyle = grad(s, 0, 0, 0, SH, [[0, '#5f7f8a'], [.45, '#b9bdb6'], [.8, '#f3c99a'], [1, '#ffd9ab']]); s.fillRect(0, 0, SW, SH);
   TMP = mk(W, H); TMPG = TMP.getContext('2d');
 }
 
@@ -54,18 +54,18 @@ export function drawSky(ctx, cam, w) {
     add(ctx, () => { ctx.globalAlpha = .55 * sunAmt; ctx.fillStyle = rgrad(ctx, sx, sy, rr * .78, rr * 1.04, [[0, 'rgba(255,180,90,0)'], [.5, 'rgba(255,190,110,.5)'], [1, 'rgba(255,170,90,0)']]); ctx.fillRect(0, 0, W, H); });
   } else draw(ctx, CLOUDS);
   // darkening for the storm turn
-  if (w.skyDark > 0) { ctx.fillStyle = `rgba(3,6,9,${w.skyDark * .55})`; ctx.fillRect(-300, -300, W + 600, H + 600); }
+  if (w.skyDark > 0) { ctx.fillStyle = `rgba(3,6,9,${w.skyDark * .4})`; ctx.fillRect(-300, -300, W + 600, H + 600); }
   ctx.restore();
 }
 export function drawRays(ctx, cam, w) {
   if (w.sunBreak <= .02) return;
-  const [sx, sy, vis] = sunScreen(cam); if (!vis) return;
+  const [sx, sy, vis] = sunScreen(cam); if (!vis || sy > H * .95 || sy < -H * .3) return;
   add(ctx, () => {
     for (let i = 0; i < 16; i++) {
       const a = Math.PI * (.12 + i * .052) + Math.sin(i * 12.9 + w.t * .15) * .02, wd = .022 + .02 * ((i * 7) % 5) / 5, L = 1600;
       const x1 = sx + Math.cos(a) * L, y1 = sy + Math.sin(a) * L;
       const g = ctx.createLinearGradient(sx, sy, x1, y1);
-      g.addColorStop(0, `rgba(255,214,150,${.34 * w.sunBreak})`); g.addColorStop(.6, `rgba(255,200,130,${.1 * w.sunBreak})`); g.addColorStop(1, 'rgba(255,200,130,0)');
+      g.addColorStop(0, `rgba(255,214,150,${.26 * w.sunBreak})`); g.addColorStop(.6, `rgba(255,200,130,${.1 * w.sunBreak})`); g.addColorStop(1, 'rgba(255,200,130,0)');
       ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + Math.cos(a - wd) * L, sy + Math.sin(a - wd) * L); ctx.lineTo(sx + Math.cos(a + wd) * L, sy + Math.sin(a + wd) * L); ctx.fill();
     }
   });
