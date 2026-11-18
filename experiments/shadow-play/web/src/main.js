@@ -114,7 +114,7 @@ async function init() {
   window.__renderFrame = (t, sub = SUB) => {
     let info;
     for (let i = 0; i < sub; i++) {
-      const ts = t + (sub > 1 ? (i / (sub - 1) - .5) : 0) * SHUTTER / FPS;
+      const shut = (t > 21 && t < 27.6) ? .2 : SHUTTER; const ts = t + (sub > 1 ? (i / (sub - 1) - .5) : 0) * shut / FPS;
       sg.clearRect(0, 0, W, H); info = drawScene(sg, ts);
       ag.globalAlpha = 1 / (i + 1); ag.drawImage(scene, 0, 0);
     }

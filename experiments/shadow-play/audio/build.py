@@ -12,14 +12,14 @@ def main(path):
     # act 4: the score DROPS OUT (ducked hard) so only the demon's roar/steps, breath and fading whispers remain
     duck = np.interp(tt, [31.2, 31.6, 33.5, 33.9, 39.2, 39.45, 43.9, 45.0], [1, .2, .2, 1, 1, .1, .1, 1])  # lowest point: only the breath; act 4: score drops out
     y = y * duck[:, None] + f * .75
-    swell_ = np.interp(tt, [44.5, 46.5, 48.8, 50], [1, 1.5, 1.7, .6]); y = y * np.where((tt > 44.5), swell_, 1.0)[:, None]
+    swell_ = np.interp(tt, [44.5, 46.5, 48.8, 50], [1, 1.3, 1.25, .5]); y = y * np.where((tt > 44.5), swell_, 1.0)[:, None]
     # global character: muffle after the blast (shot 3 low point) and clear again in the last act
     t = np.arange(len(y)) / SR
     mu = np.interp(t, [27.38, 27.5, 28.8, 33.4, 34.0], [0, 1, 1, .6, 0])
     ylp = np.stack([lp(y[:, c], 1700, 2) for c in range(2)], axis=1)
     y = y * (1 - .55 * mu[:, None]) + ylp * (.55 * mu[:, None])
     # fades & the score drop-out in act 4 (cut orchestra: handled in score), master glue
-    y *= np.minimum(1, t / .6)[:, None] * np.minimum(1, (score.D - t) / 1.2)[:, None] ** 1.0
+    y *= np.minimum(1, t / .6)[:, None] * np.minimum(1, (score.D - t) / 2.6)[:, None] ** 1.0
     # master: high-pass, slow glue compression, loudness target (~ -14 LUFS), soft-limit to -1 dBFS
     y = np.stack([hp(y[:, c], 24, 2) for c in range(2)], axis=1)
     env = np.abs(y).max(axis=1)

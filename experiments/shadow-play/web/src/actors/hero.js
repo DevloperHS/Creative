@@ -54,7 +54,7 @@ export function drawHero(ctx, hero, view, t, glow, flip, rim = [255, 140, 60]) {
     ctx.save(); ctx.clip(cloak);
     ctx.globalCompositeOperation = 'lighter';
     if (glow && glow.i > .01) { ctx.fillStyle = rgrad(ctx, glow.x, glow.y, 0, 2.2, [[0, `rgba(${rim},${.5 * glow.i})`], [.4, `rgba(${rim},${.16 * glow.i})`], [1, 'rgba(0,0,0,0)']]); ctx.fillRect(-2, -2.5, 4, 3); }
-    ctx.fillStyle = rgrad(ctx, -.2, hipY - .9, 0, 1.6, [[0, 'rgba(90,140,155,.34)'], [1, 'rgba(0,0,0,0)']]); ctx.fillRect(-2, -2.5, 4, 3);
+    ctx.fillStyle = rgrad(ctx, -.2, hipY - .9, 0, 1.6, [[0, 'rgba(110,165,180,.5)'], [1, 'rgba(0,0,0,0)']]); ctx.fillRect(-2, -2.5, 4, 3);
     ctx.restore();
     // wet rim highlight on shoulder / back
     ctx.strokeStyle = 'rgba(150,195,205,.45)'; ctx.lineWidth = .02; ctx.stroke(cloak);

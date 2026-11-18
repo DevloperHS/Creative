@@ -44,7 +44,7 @@ function drawSmokeBody(ctx, p, t, trail, seed, dm) {
 }
 function drawRags(ctx, p, t, trail, dm) {
   ctx.fillStyle = '#05070a';
-  for (let k = 0; k < (dm ? 9 : 6); k++) {
+  for (let k = 0; k < (dm ? 14 : 6); k++) {
     const side = k % 2 ? 1 : -1, o = (k >> 1), x0 = side * (.2 + o * .09), y0 = -.32 + o * .08;
     const tr = trail(.12 + o * .06), len = .7 + o * .22 + dm * .35 + hash(k) * .2;
     ctx.beginPath(); ctx.moveTo(x0, y0);

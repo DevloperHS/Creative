@@ -162,10 +162,10 @@ def shot3(bus):
 def shot4(bus, fg):
     dm = T('demon')
     # the score drops out: only the thing itself — its roar, thundering steps, rumble
-    fg.add(roar(3.0, 1.0), dm - .1, .8, 0, send=.5)
+    fg.add(roar(3.0, 1.0), dm - .1, .55, 0, send=.5)
     tt = dm + .1; gap = .5; i = 0
     while tt < dm + 3.0:
-        fg.add(sub_boom(1.2, 80, 28), tt, .65 + i * .03, 0, send=.25); fg.add(splash(.9, .7, 1.1, 300 + i), tt, .35 + i * .02, R.uniform(-.3, .3), send=.2)
+        fg.add(sub_boom(1.2, 80, 28), tt, .45 + i * .02, 0, send=.25); fg.add(splash(.9, .7, 1.1, 300 + i), tt, .35 + i * .02, R.uniform(-.3, .3), send=.2)
         tt += gap; gap = max(.2, gap * .88); i += 1
     bus.add(lp(pink(3.4, 9), 220) * swell(3.4, 1.2, 1.2) * 2.5, dm, .5, 0, send=.2)
     # hero breathes
