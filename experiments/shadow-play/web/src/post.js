@@ -29,7 +29,7 @@ export function drawMist(ctx, t) {
 
 export function post(out, acc, t, w, cam) {
   out.save();
-  out.filter = `saturate(${(.8 + .4 * w.warm).toFixed(2)}) contrast(1.1) brightness(${(.98 - .02 * w.warm).toFixed(2)})`; out.drawImage(acc, 0, 0); out.filter = 'none';
+  out.filter = `saturate(${(.8 + .4 * w.warm).toFixed(2)}) contrast(1.1) brightness(${(.98 - .02 * w.warm).toFixed(2)})`; out.drawImage(acc, 0, 0, W, H); out.filter = 'none';
   // --- bloom (threshold → blur → add) + horizontal anamorphic streak ---
   g1.save(); g1.clearRect(0, 0, W / 4, H / 4); g1.filter = 'brightness(.62) contrast(2.6)'; g1.drawImage(acc, 0, 0, W / 4, H / 4); g1.restore();
   g2.save(); g2.clearRect(0, 0, W / 4, H / 4); g2.filter = 'blur(6px)'; g2.drawImage(B1, 0, 0); g2.restore();

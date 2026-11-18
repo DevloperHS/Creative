@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 OUT="${1:-out/shadow-play.mp4}"
-ffmpeg -hide_banner -loglevel error -y -framerate 24 -i out/frames/f%05d.jpg -i out/audio.wav \
-  -c:v libx264 -preset slow -crf 20 -maxrate 14M -bufsize 28M -pix_fmt yuv420p -profile:v high -movflags +faststart \
+ffmpeg -hide_banner -loglevel error -y -framerate 60 -i out/frames/f%05d.jpg -i out/audio.wav \
+  -c:v libx264 -preset slow -crf 21 -maxrate 12M -bufsize 24M -pix_fmt yuv420p -profile:v high -movflags +faststart \
   -c:a aac -b:a 320k -ar 48000 -t 50 "$OUT"
 ffprobe -v error -show_entries format=duration,size:stream=codec_name,width,height,r_frame_rate -of default=nw=1 "$OUT"

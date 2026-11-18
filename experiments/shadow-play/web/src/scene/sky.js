@@ -1,4 +1,4 @@
-import { W, H } from '../config.js';
+import { W, H, K } from '../config.js';
 import { S } from '../gfx/sprites.js';
 import { rng, lerp, clamp, mix3, rgb, rgba, sstep } from '../util/math.js';
 import { grad, rgrad, add } from '../gfx/draw.js';
@@ -18,7 +18,7 @@ export function buildSky() {
   g.globalAlpha = 1;
   SUNSKY = mk(SW, SH); const s = SUNSKY.getContext('2d');
   s.fillStyle = grad(s, 0, 0, 0, SH, [[0, '#5f7f8a'], [.45, '#b9bdb6'], [.8, '#f3c99a'], [1, '#ffd9ab']]); s.fillRect(0, 0, SW, SH);
-  TMP = mk(W, H); TMPG = TMP.getContext('2d');
+  TMP = mk(W * K, H * K); TMPG = TMP.getContext('2d'); TMPG.setTransform(K, 0, 0, K, 0, 0);
 }
 
 export function sunScreen(cam) {
@@ -49,7 +49,7 @@ export function drawSky(ctx, cam, w) {
     const rr = lerp(40, 900, sstep(0, 1, sunAmt));
     TMPG.fillStyle = rgrad(TMPG, sx, sy, rr * .1, rr, [[0, 'rgba(0,0,0,1)'], [.55, 'rgba(0,0,0,.95)'], [1, 'rgba(0,0,0,0)']]); TMPG.fillRect(0, 0, W, H);
     TMPG.fillStyle = rgrad(TMPG, sx - 300, sy + 120, 10, rr * .8, [[0, 'rgba(0,0,0,.9)'], [1, 'rgba(0,0,0,0)']]); TMPG.fillRect(0, 0, W, H);
-    TMPG.restore(); ctx.drawImage(TMP, 0, 0);
+    TMPG.restore(); ctx.drawImage(TMP, 0, 0, W, H);
     // warm rim where cloud meets sky
     add(ctx, () => { ctx.globalAlpha = .55 * sunAmt; ctx.fillStyle = rgrad(ctx, sx, sy, rr * .78, rr * 1.04, [[0, 'rgba(255,180,90,0)'], [.5, 'rgba(255,190,110,.5)'], [1, 'rgba(255,170,90,0)']]); ctx.fillRect(0, 0, W, H); });
   } else draw(ctx, CLOUDS);

@@ -3,13 +3,13 @@
 import { createRequire } from 'node:module'; const { chromium } = createRequire('/opt/node22/lib/node_modules/')('playwright');
 import fs from 'node:fs'; import { serve } from './serve.mjs';
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? +process.argv[i + 1] : d; };
-const WORKERS = arg('workers', 4), FPS = arg('fps', 24), FROM = arg('from', 0), TO = arg('to', 50 * FPS), Q = arg('q', 0.96);
+const WORKERS = arg('workers', 4), FPS = arg('fps', 60), FROM = arg('from', 0), TO = arg('to', 50 * FPS), Q = arg('q', 0.96);
 const outdir = 'out/frames'; fs.mkdirSync(outdir, { recursive: true });
 const { server, url } = await serve();
 const b = await chromium.launch({ args: ['--use-gl=swiftshader', '--enable-unsafe-swiftshader'] });
 let next = FROM, done = 0; const t0 = Date.now();
 async function worker(id) {
-  const pg = await b.newPage({ viewport: { width: 1280, height: 720 } });
+  const pg = await b.newPage({ viewport: { width: 1920, height: 1080 } });
   pg.on('pageerror', e => console.log('[pageerror]', e.message));
   await pg.goto(url + 'web/index.html'); await pg.waitForFunction(() => window.__ready || window.__error, null, { timeout: 120000 });
   const err = await pg.evaluate(() => window.__error); if (err) throw new Error(err);

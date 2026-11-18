@@ -12,7 +12,7 @@ for t in sorted(set([i * 2.0 + 0.5 for i in range(25)] + [4.3, 11.9, 14.2, 21.6,
 for t in (3.9, 6.4, 11.7, 13.6, 21.3, 27.5, 35.5, 39.6):   # action beats: 3 consecutive frames side by side
     fs = []
     for k in range(3):
-        n = os.path.join(outdir, f'_m{t}_{k}.png'); grab(t + k / 24, os.path.basename(n)); fs.append(n)
+        n = os.path.join(outdir, f'_m{t}_{k}.png'); grab(t + k / 60, os.path.basename(n)); fs.append(n)
     from PIL import Image
     ims = [Image.open(f).convert('RGB').resize((640, 360)) for f in fs]
     sheet = Image.new('RGB', (1920, 360)); [sheet.paste(im, (i * 640, 0)) for i, im in enumerate(ims)]

@@ -1,4 +1,4 @@
-import { W, H, FPS, DUR, SUB, SHUTTER } from './config.js';
+import { W, H, K, FPS, DUR, SUB, SHUTTER } from './config.js';
 import { loadEvents, first, T } from './choreo/events.js';
 import { buildSprites, S } from './gfx/sprites.js';
 import { makeCam } from './camera.js';
@@ -20,7 +20,7 @@ import { buildPost, post } from './post.js';
 import { clamp, lerp, sstep, seg, TAU } from './util/math.js';
 import { add } from './gfx/draw.js';
 
-const mk = () => { const c = document.createElement('canvas'); c.width = W; c.height = H; return c; };
+const mk = () => { const c = document.createElement('canvas'); c.width = W * K; c.height = H * K; return c; };
 let scene, sg, acc, ag, out;
 
 function worldState(t) {
@@ -111,16 +111,17 @@ function drawGripBlade(c, P) {
 async function init() {
   await loadEvents(); world.initWorld(); buildSprites(); buildSky(); buildPost();
   scene = mk(); sg = scene.getContext('2d'); acc = mk(); ag = acc.getContext('2d'); out = document.getElementById('c').getContext('2d');
+  for (const g of [sg, ag, out]) g.setTransform(K, 0, 0, K, 0, 0);
   window.__renderFrame = (t, sub = SUB) => {
     let info;
     for (let i = 0; i < sub; i++) {
-      const shut = (t > 21 && t < 27.6) ? .2 : SHUTTER; const ts = t + (sub > 1 ? (i / (sub - 1) - .5) : 0) * shut / FPS;
+      const shut = (t > 21 && t < 27.6) ? .5 : SHUTTER; const ts = t + (sub > 1 ? (i / (sub - 1) - .5) : 0) * shut / FPS;
       sg.clearRect(0, 0, W, H); info = drawScene(sg, ts);
-      ag.globalAlpha = 1 / (i + 1); ag.drawImage(scene, 0, 0);
+      ag.globalAlpha = 1 / (i + 1); ag.drawImage(scene, 0, 0, W, H);
     }
     ag.globalAlpha = 1;
     out.clearRect(0, 0, W, H); const w = worldState(t); setEnv(w);
-    if (window.__dbg && window.__dbg.noPost) out.drawImage(acc, 0, 0); else post(out, acc, t, w, info.cam);
+    if (window.__dbg && window.__dbg.noPost) out.drawImage(acc, 0, 0, W, H); else post(out, acc, t, w, info.cam);
     return true;
   };
   window.__ready = true;
